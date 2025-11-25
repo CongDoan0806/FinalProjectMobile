@@ -4,6 +4,7 @@ import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import HomeStackScreen from './HomeStackScreen';
 import SignupScreen from './SignupScreen';
 import LoginScreen from './LoginScreen';
+import HomeScreen from './HomeScreen';
 
 export type BottomTabParamList = {
   HomeTab: undefined;
