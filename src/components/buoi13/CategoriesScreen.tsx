@@ -48,14 +48,14 @@ const CategoriesScreen = ({ navigation }: CategoriesScreenProps) => {
         </Text>
       </View>
       <Text style={styles.categoryName}>{item.name}</Text>
-      <Text style={styles.categoryArrow}>›</Text>
+      <Text style={styles.categoryArrow}>➡️</Text>
     </TouchableOpacity>
   );
 
   if (loading) {
     return (
       <View style={styles.loadingContainer}>
-        <ActivityIndicator size="large" color="#E91E63" />
+        <ActivityIndicator size="large" color="#00FFFF" />
         <Text style={styles.loadingText}>Đang tải danh mục...</Text>
       </View>
     );
@@ -88,7 +88,7 @@ const styles = StyleSheet.create({
     backgroundColor: '#fff'
   },
   header: {
-    backgroundColor: '#E91E63',
+    backgroundColor: '#00FFFF',
     paddingVertical: 15,
     paddingHorizontal: 20,
     elevation: 4,
@@ -125,7 +125,7 @@ const styles = StyleSheet.create({
     width: 50,
     height: 50,
     borderRadius: 25,
-    backgroundColor: '#E91E63',
+    backgroundColor: '#00FFFF',
     justifyContent: 'center',
     alignItems: 'center',
     marginRight: 15

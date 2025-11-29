@@ -85,7 +85,7 @@ const styles = StyleSheet.create({
     width: 45,
     height: 45,
     borderRadius: 22.5,
-    backgroundColor: '#E91E63',
+    backgroundColor: '#00FFFF',
     justifyContent: 'center',
     alignItems: 'center',
     marginRight: 12
@@ -119,7 +119,7 @@ const styles = StyleSheet.create({
   logoutText: {
     fontSize: 14,
     fontWeight: '600',
-    color: '#E91E63'
+    color: '#00FFFF'
   }
 });
 

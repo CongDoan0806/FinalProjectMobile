@@ -121,6 +121,31 @@ export const addProduct = async (p: Omit<Product, 'id'>) => {
     [p.name, p.price, p.img, p.categoryId]);
 };
 
+export const addCategory = async (name: string): Promise<void> => {
+  const db = await getDb();
+  await db.executeSql('INSERT INTO categories (name) VALUES (?)', [name]);
+}
+
+export const deleteCategory = async (id: number): Promise<void> => {
+  const db = await getDb();
+  await db.executeSql('DELETE FROM categories WHERE id=?', [id]);
+}
+
+export const fetchCategoryById = async (id: number): Promise<Category | null> => {
+  const db = await getDb();
+  const [res] = await db.executeSql('SELECT * FROM categories WHERE id=?', [id]);
+  const rows = res.rows;
+  if (rows.length > 0) {
+    return rows.item(0) as Category;
+  }
+  return null;
+}
+
+export const updateCategory = async (id: number, name: string): Promise<void> => {
+  const db = await getDb();
+  await db.executeSql('UPDATE categories SET name=? WHERE id=?', [name, id]);
+}
+
 export const updateProduct = async (p: Product) => {
   const db = await getDb();
   await db.executeSql('UPDATE products SET name=?, price=?, img=?, categoryId=? WHERE id=?',
@@ -228,3 +253,37 @@ export const loginUser = async (username: string, password: string): Promise<Use
     return null;
   }
 };
+
+export const fetchProductById = async (id: number): Promise<Product | null> => {
+  try {
+    const db = await getDb();
+    const results = await db.executeSql('SELECT * FROM products WHERE id = ?', [id]); 
+    const rows = results[0].rows;
+    if (rows.length > 0) {
+      return rows.item(0) as Product;
+    } 
+    return null;
+  } catch (error) {
+    console.error('❌ Error fetching product by id:', error);
+    return null;
+  }
+};
+
+export const fetchUsers = async (): Promise<User[]> => {
+  try {
+    const database = await getDb();
+    const results = await database.executeSql('SELECT * FROM users');
+    const rows = results[0].rows;
+    const list: User[] = [];  
+    for (let i = 0; i < rows.length; i++) list.push(rows.item(i));
+    return list;
+  } catch (error) {
+    console.error('❌ Error fetching users:', error);
+    return [];
+  } 
+};
+
+export const deleteUser = async (id: number): Promise<void> => {
+  const db = await getDb();
+  await db.executeSql('DELETE FROM users WHERE id=?', [id]);
+}

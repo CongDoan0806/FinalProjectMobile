@@ -187,14 +187,14 @@ const styles = StyleSheet.create({
     backgroundColor: '#f9f9f9'
   },
   button: {
-    backgroundColor: '#E91E63',
+    backgroundColor: '#00FFFF',
     paddingVertical: 15,
     borderRadius: 8,
     alignItems: 'center',
     justifyContent: 'center',
     marginTop: 10,
     elevation: 2,
-    shadowColor: '#E91E63',
+    shadowColor: '#00FFFF',
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.3,
     shadowRadius: 3

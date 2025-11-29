@@ -26,6 +26,7 @@ export type HomeStackParamList = {
   Fashion: undefined;
   Categories: undefined;
   About: undefined;
+  Chat: undefined;
 
   AdminDashboard: undefined;
   CategoryManagement: undefined;

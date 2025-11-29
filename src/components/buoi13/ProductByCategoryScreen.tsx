@@ -32,7 +32,7 @@ const convertProductToProduct1 = (product: Product): Product1 => {
     id: product.id.toString(),
     name: product.name,
     price: `${product.price.toLocaleString('vi-VN')}đ`,
-    image: productImages[product.id % productImages.length] // Sử dụng hình ảnh placeholder
+    image: product.img.startsWith('http') ? { uri: product.img } : productImages[product.id % productImages.length]
   };
 };
 
@@ -76,7 +76,7 @@ export default function ProductsByCategoryScreen() {
   }, [selectedCategoryId]);
 
   const getImageSource = (img: string) => {
-    if (img.startsWith('file://')) return { uri: img };
+    if (img.startsWith('http')) return { uri: img };
     // Sử dụng hình ảnh placeholder từ assets có sẵn
     return require('../../../assets/images/avt1.jpg');
   };
@@ -91,7 +91,7 @@ export default function ProductsByCategoryScreen() {
           style={styles.backButton}
           onPress={() => navigation.goBack()}
         >
-          <Text style={styles.backButtonText}>←</Text>
+          <Text style={styles.backButtonText}>⬅️</Text>
         </TouchableOpacity>
         <Text style={styles.headerTitle}>
           {selectedCategory ? selectedCategory.name : 'Sản phẩm'}
@@ -109,12 +109,12 @@ export default function ProductsByCategoryScreen() {
       {/* Products List */}
       {loading ? (
         <View style={styles.loadingContainer}>
-          <ActivityIndicator size="large" color="#E91E63" />
+          <ActivityIndicator size="large" color="#00FFFF" />
           <Text style={styles.loadingText}>Đang tải sản phẩm...</Text>
         </View>
       ) : loadingProducts ? (
         <View style={styles.loadingContainer}>
-          <ActivityIndicator size="large" color="#E91E63" />
+          <ActivityIndicator size="large" color="#00FFFF" />
           <Text style={styles.loadingText}>Đang tải...</Text>
         </View>
       ) : (
@@ -134,7 +134,7 @@ export default function ProductsByCategoryScreen() {
                   <Text style={styles.name}>{item.name}</Text>
                   <Text style={styles.price}>{item.price.toLocaleString('vi-VN')} đ</Text>
                 </View>
-                <Text style={styles.arrow}>›</Text>
+                <Text style={styles.arrow}>➡️</Text>
               </TouchableOpacity>
             );
           }}
@@ -160,7 +160,7 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-between',
-    backgroundColor: '#E91E63',
+    backgroundColor: '#00FFFF',
     paddingVertical: 15,
     paddingHorizontal: 15,
     elevation: 4,
@@ -224,7 +224,7 @@ const styles = StyleSheet.create({
   },
   price: {
     fontSize: 16,
-    color: '#E91E63',
+    color: '#00FFFF',
     fontWeight: '700'
   },
   arrow: {

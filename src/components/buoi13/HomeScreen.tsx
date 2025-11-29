@@ -33,7 +33,7 @@ const convertProductToProduct1 = (product: Product): Product1 => {
     id: product.id.toString(),
     name: product.name,
     price: `${product.price.toLocaleString('vi-VN')}đ`,
-    image: productImages[product.id % productImages.length] // Sử dụng hình ảnh placeholder
+    image: product.img.startsWith('http') ? { uri: product.img } : productImages[product.id % productImages.length]
   };
 };
 
@@ -173,7 +173,7 @@ const HomeScreen = ({ navigation }: HomeScreenProps) => {
           style={styles.banner}
         />
         <View style={styles.bannerOverlay}>
-          <Text style={styles.bannerTitle}>Cửa Hàng Thời Trang ABC</Text>
+          <Text style={styles.bannerTitle}>Cửa Hàng Thời Trang Công Đoàn</Text>
           <Text style={styles.bannerSubtitle}>Chất lượng - Uy tín - Giá tốt</Text>
         </View>
       </View>
@@ -184,27 +184,31 @@ const HomeScreen = ({ navigation }: HomeScreenProps) => {
           style={styles.menuItem}
           onPress={() => navigation.navigate('Home')}
         >
-          <Text style={styles.menuIcon}>🏠</Text>
-          <Text style={styles.menuText}>Home</Text>
+          <Text style={styles.menuIcon}>🏪</Text>
+          <Text style={styles.menuText}>Trang chủ</Text>
         </TouchableOpacity>
 
         <TouchableOpacity
           style={styles.menuItem}
           onPress={() => navigation.navigate('Categories')}
         >
-          <Text style={styles.menuIcon}>📂</Text>
+          <Text style={styles.menuIcon}>🛍️</Text>
           <Text style={styles.menuText}>Danh mục sản phẩm</Text>
         </TouchableOpacity>
-      </View>
 
-      <Text style={styles.welcomeText}>
-        Chào mừng đến với cửa hàng thời trang ABC!
-      </Text>
+        <TouchableOpacity
+          style={styles.menuItem}
+          onPress={() => navigation.navigate('Chat')}
+        >
+          <Text style={styles.menuIcon}>🤖</Text>
+          <Text style={styles.menuText}>Trợ lý AI</Text>
+        </TouchableOpacity>
+      </View>
 
       {/* Search Bar */}
       <View style={styles.searchContainer}>
         <View style={styles.searchBox}>
-          <Text style={styles.searchIcon}>🔍</Text>
+          <Text style={styles.searchIcon}>⚡</Text>
           <TextInput
             style={styles.searchInput}
             placeholder="Tìm kiếm theo tên sản phẩm hoặc danh mục..."
@@ -218,7 +222,7 @@ const HomeScreen = ({ navigation }: HomeScreenProps) => {
               style={styles.clearButton}
               onPress={() => setSearchKeyword('')}
             >
-              <Text style={styles.clearButtonText}>✕</Text>
+              <Text style={styles.clearButtonText}>❌</Text>
             </TouchableOpacity>
           )}
         </View>
@@ -231,7 +235,7 @@ const HomeScreen = ({ navigation }: HomeScreenProps) => {
           onPress={() => setShowFilter(!showFilter)}
         >
           <Text style={styles.filterToggleText}>
-            {showFilter ? '▼' : '▶'} Lọc sản phẩm
+            {showFilter ? '🔽' : '🔼'} Lọc sản phẩm
           </Text>
           {isFilterActive && (
             <View style={styles.filterBadge}>
@@ -302,12 +306,12 @@ const HomeScreen = ({ navigation }: HomeScreenProps) => {
 
       {loading ? (
         <View style={styles.loadingContainer}>
-          <ActivityIndicator size="large" color="#E91E63" />
+          <ActivityIndicator size="large" color="#00B8CC" />
           <Text style={styles.loadingText}>Đang tải sản phẩm...</Text>
         </View>
       ) : isSearching ? (
         <View style={styles.loadingContainer}>
-          <ActivityIndicator size="large" color="#E91E63" />
+          <ActivityIndicator size="large" color="#00B8CC" />
           <Text style={styles.loadingText}>Đang tìm kiếm...</Text>
         </View>
       ) : (
@@ -321,14 +325,14 @@ const HomeScreen = ({ navigation }: HomeScreenProps) => {
             <View style={styles.emptyContainer}>
               {isFilterActive ? (
                 <>
-                  <Text style={styles.emptyIcon}>🔍</Text>
+                  <Text style={styles.emptyIcon}>🚫</Text>
                   <Text style={styles.emptyText}>
                     Không tìm thấy sản phẩm nào phù hợp với bộ lọc
                   </Text>
                 </>
               ) : searchKeyword.trim() ? (
                 <>
-                  <Text style={styles.emptyIcon}>🔍</Text>
+                  <Text style={styles.emptyIcon}>💭</Text>
                   <Text style={styles.emptyText}>
                     Không tìm thấy sản phẩm nào với từ khóa "{searchKeyword}"
                   </Text>
@@ -511,12 +515,12 @@ const styles = StyleSheet.create({
 
   productPrice: {
     fontSize: 14,
-    color: '#E91E63',
+    color: '#00B8CC',
     marginBottom: 10
   },
 
   buyButton: {
-    backgroundColor: '#E91E63',
+    backgroundColor: '#00B8CC',
     paddingVertical: 8,
     paddingHorizontal: 15,
     borderRadius: 5
@@ -581,7 +585,7 @@ const styles = StyleSheet.create({
     color: '#333'
   },
   filterBadge: {
-    backgroundColor: '#E91E63',
+    backgroundColor: '#00B8CC',
     paddingHorizontal: 8,
     paddingVertical: 4,
     borderRadius: 12
@@ -634,9 +638,9 @@ const styles = StyleSheet.create({
     marginHorizontal: 5
   },
   applyButton: {
-    backgroundColor: '#E91E63',
+    backgroundColor: '#00B8CC',
     elevation: 2,
-    shadowColor: '#E91E63',
+    shadowColor: '#00B8CC',
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.3,
     shadowRadius: 3
@@ -652,7 +656,7 @@ const styles = StyleSheet.create({
     color: '#fff'
   },
   resetButtonText: {
-    color: '#E91E63'
+    color: '#00B8CC'
   }
 });
 

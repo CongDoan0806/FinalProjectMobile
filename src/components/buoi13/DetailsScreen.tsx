@@ -26,7 +26,7 @@ const DetailsScreen = ({ route }: DetailsScreenProps) => {
           style={styles.backButton}
           onPress={() => navigation.goBack()}
         >
-          <Text style={styles.backButtonText}>←</Text>
+          <Text style={styles.backButtonText}>⬅️</Text>
         </TouchableOpacity>
         <Text style={styles.headerTitle}>Chi Tiết Sản Phẩm</Text>
         <View style={styles.backButton} />
@@ -104,7 +104,7 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-between',
-    backgroundColor: '#E91E63',
+    backgroundColor: '#00FFFF',
     paddingVertical: 15,
     paddingHorizontal: 15,
     elevation: 4,
@@ -176,7 +176,7 @@ const styles = StyleSheet.create({
   productPrice: {
     fontSize: 28,
     fontWeight: 'bold',
-    color: '#E91E63'
+    color: '#00FFFF'
   },
   divider: {
     height: 1,
@@ -239,14 +239,14 @@ const styles = StyleSheet.create({
   },
   buyButton: {
     flex: 1,
-    backgroundColor: '#E91E63',
+    backgroundColor: '#00FFFF',
     paddingVertical: 15,
     borderRadius: 8,
     marginRight: 10,
     alignItems: 'center',
     justifyContent: 'center',
     elevation: 2,
-    shadowColor: '#E91E63',
+    shadowColor: '#00FFFF',
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.3,
     shadowRadius: 3
@@ -262,12 +262,12 @@ const styles = StyleSheet.create({
     paddingVertical: 15,
     borderRadius: 8,
     borderWidth: 2,
-    borderColor: '#E91E63',
+    borderColor: '#00FFFF',
     alignItems: 'center',
     justifyContent: 'center'
   },
   cartButtonText: {
-    color: '#E91E63',
+    color: '#00FFFF',
     fontSize: 16,
     fontWeight: 'bold'
   }

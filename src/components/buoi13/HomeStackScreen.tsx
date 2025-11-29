@@ -4,7 +4,15 @@ import HomeScreen from './HomeScreen';
 import DetailsScreen from './DetailsScreen';
 import ProductsByCategoryScreen from './ProductByCategoryScreen';
 import CategoriesScreen from './CategoriesScreen';
+import AdminScreen from './AdminScreen';
+// import ProductManagementScreen from './ProductManagementScreen';
+// import UserManagementScreen from './UserManagementScreen';
+// import CategoryManagementScreen from './CategoryManagementScreen';
 import { HomeStackParamList } from './types';
+import CategoryManagementScreen from './CategoryManagementScreen';
+import ProductManagementScreen from './ProductManagementScreen';
+import ChatScreen from './ChatScreen';
+import UserManagementScreen from './UserManagementScreen';
 
 // export type HomeStackParamList = {
 //   Home: undefined;
@@ -23,6 +31,11 @@ const HomeStackScreen = () => {
       <Stack.Screen name="Details" component={DetailsScreen} />
       <Stack.Screen name="ProductsByCategory" component={ProductsByCategoryScreen} />
       <Stack.Screen name="Categories" component={CategoriesScreen} />
+      <Stack.Screen name="Chat" component={ChatScreen} />
+      <Stack.Screen name="AdminDashboard" component={AdminScreen} />
+      <Stack.Screen name="ProductManagement" component={ProductManagementScreen} />
+      <Stack.Screen name="UserManagement" component={UserManagementScreen} />
+      <Stack.Screen name="CategoryManagement" component={CategoryManagementScreen} />
     </Stack.Navigator>
   );
 };
