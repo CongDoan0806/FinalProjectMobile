@@ -198,6 +198,14 @@ const HomeScreen = ({ navigation }: HomeScreenProps) => {
 
         <TouchableOpacity
           style={styles.menuItem}
+          onPress={() => navigation.navigate('OrderHistory')}
+        >
+          <Text style={styles.menuIcon}>📋</Text>
+          <Text style={styles.menuText}>Lịch sử</Text>
+        </TouchableOpacity>
+
+        <TouchableOpacity
+          style={styles.menuItem}
           onPress={() => navigation.navigate('Chat')}
         >
           <Text style={styles.menuIcon}>🤖</Text>

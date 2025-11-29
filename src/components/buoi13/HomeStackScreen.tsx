@@ -14,6 +14,10 @@ import ProductManagementScreen from './ProductManagementScreen';
 import ChatScreen from './ChatScreen';
 import UserManagementScreen from './UserManagementScreen';
 import OrderManagementScreen from './OrderManagementScreen';
+import CartScreen from './CartScreen';
+import CheckoutScreen from './CheckoutScreen';
+import OrderHistoryScreen from './OrderHistoryScreen';
+import ProfileScreen from './ProfileScreen';
 
 // export type HomeStackParamList = {
 //   Home: undefined;
@@ -38,6 +42,10 @@ const HomeStackScreen = () => {
       <Stack.Screen name="UserManagement" component={UserManagementScreen} />
       <Stack.Screen name="CategoryManagement" component={CategoryManagementScreen} />
       <Stack.Screen name="OrderManagement" component={OrderManagementScreen} />
+      <Stack.Screen name="Cart" component={CartScreen} />
+      <Stack.Screen name="Checkout" component={CheckoutScreen} />
+      <Stack.Screen name="OrderHistory" component={OrderHistoryScreen} />
+      <Stack.Screen name="Profile" component={ProfileScreen} />
     </Stack.Navigator>
   );
 };

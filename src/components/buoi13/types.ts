@@ -35,4 +35,9 @@ export type HomeStackParamList = {
   AddUser: undefined;
   EditUser: { userId: number };
   ProductManagement: { categoryId: number };
+  
+  Cart: undefined;
+  Checkout: undefined;
+  OrderHistory: undefined;
+  Profile: undefined;
 };

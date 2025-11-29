@@ -7,9 +7,11 @@ import {
   Alert
 } from 'react-native';
 import { useAuth } from './AuthContext';
+import { useNavigation } from '@react-navigation/native';
 
 const Header = () => {
   const { user, logout } = useAuth();
+  const navigation = useNavigation();
 
   const handleLogout = () => {
     Alert.alert(
@@ -50,12 +52,20 @@ const Header = () => {
           </Text>
         </View>
       </View>
-      <TouchableOpacity
-        style={styles.logoutButton}
-        onPress={handleLogout}
-      >
-        <Text style={styles.logoutText}>Đăng xuất</Text>
-      </TouchableOpacity>
+      <View style={styles.rightActions}>
+        <TouchableOpacity
+          style={styles.cartButton}
+          onPress={() => navigation.navigate('Cart' as never)}
+        >
+          <Text style={styles.cartIcon}>🛒</Text>
+        </TouchableOpacity>
+        <TouchableOpacity
+          style={styles.logoutButton}
+          onPress={handleLogout}
+        >
+          <Text style={styles.logoutText}>Đăng xuất</Text>
+        </TouchableOpacity>
+      </View>
     </View>
   );
 };
@@ -107,6 +117,22 @@ const styles = StyleSheet.create({
   role: {
     fontSize: 12,
     color: '#666'
+  },
+  rightActions: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 8,
+  },
+  cartButton: {
+    width: 40,
+    height: 40,
+    borderRadius: 20,
+    backgroundColor: '#00FFFF',
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  cartIcon: {
+    fontSize: 20,
   },
   logoutButton: {
     paddingHorizontal: 15,

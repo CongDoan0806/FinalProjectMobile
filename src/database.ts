@@ -86,7 +86,17 @@ export const initDatabase = async (onSuccess?: () => void): Promise<void> => {
         WHERE NOT EXISTS (SELECT 1 FROM users WHERE username = 'admin')
       `);
       
-      // 4️⃣ Tạo bảng orders
+      // 4️⃣ Tạo bảng cart
+      tx.executeSql(`CREATE TABLE IF NOT EXISTS cart (
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        userId INTEGER,
+        productId INTEGER,
+        quantity INTEGER,
+        FOREIGN KEY (userId) REFERENCES users(id),
+        FOREIGN KEY (productId) REFERENCES products(id)
+      )`);
+      
+      // 5️⃣ Tạo bảng orders
       tx.executeSql(`CREATE TABLE IF NOT EXISTS orders (
         id INTEGER PRIMARY KEY AUTOINCREMENT,
         userId INTEGER,
@@ -417,4 +427,112 @@ export const fetchOrders = async (): Promise<Order[]> => {
 export const updateOrderStatus = async (id: number, status: string): Promise<void> => {
   const db = await getDb();
   await db.executeSql('UPDATE orders SET status=? WHERE id=?', [status, id]);
+};
+
+// ====================== CART FUNCTIONS ======================
+export type CartItem = {
+  id: number;
+  userId: number;
+  productId: number;
+  quantity: number;
+  productName: string;
+  productPrice: number;
+  productImg: string;
+};
+
+export const initCartTable = async (): Promise<void> => {
+  const db = await getDb();
+  await db.executeSql(`
+    CREATE TABLE IF NOT EXISTS cart (
+      id INTEGER PRIMARY KEY AUTOINCREMENT,
+      userId INTEGER,
+      productId INTEGER,
+      quantity INTEGER,
+      FOREIGN KEY (userId) REFERENCES users(id),
+      FOREIGN KEY (productId) REFERENCES products(id)
+    )
+  `);
+};
+
+export const addToCart = async (userId: number, productId: number, quantity: number = 1): Promise<void> => {
+  const db = await getDb();
+  const [result] = await db.executeSql('SELECT * FROM cart WHERE userId=? AND productId=?', [userId, productId]);
+  
+  if (result.rows.length > 0) {
+    const existingItem = result.rows.item(0);
+    await db.executeSql('UPDATE cart SET quantity=? WHERE id=?', [existingItem.quantity + quantity, existingItem.id]);
+  } else {
+    await db.executeSql('INSERT INTO cart (userId, productId, quantity) VALUES (?, ?, ?)', [userId, productId, quantity]);
+  }
+};
+
+export const fetchCartItems = async (userId: number): Promise<CartItem[]> => {
+  const db = await getDb();
+  const [result] = await db.executeSql(`
+    SELECT c.id, c.userId, c.productId, c.quantity, p.name as productName, p.price as productPrice, p.img as productImg
+    FROM cart c
+    JOIN products p ON c.productId = p.id
+    WHERE c.userId = ?
+  `, [userId]);
+  
+  const items: CartItem[] = [];
+  for (let i = 0; i < result.rows.length; i++) {
+    items.push(result.rows.item(i));
+  }
+  return items;
+};
+
+export const updateCartQuantity = async (cartId: number, quantity: number): Promise<void> => {
+  const db = await getDb();
+  if (quantity <= 0) {
+    await db.executeSql('DELETE FROM cart WHERE id=?', [cartId]);
+  } else {
+    await db.executeSql('UPDATE cart SET quantity=? WHERE id=?', [quantity, cartId]);
+  }
+};
+
+export const removeFromCart = async (cartId: number): Promise<void> => {
+  const db = await getDb();
+  await db.executeSql('DELETE FROM cart WHERE id=?', [cartId]);
+};
+
+export const clearCart = async (userId: number): Promise<void> => {
+  const db = await getDb();
+  await db.executeSql('DELETE FROM cart WHERE userId=?', [userId]);
+};
+
+export const createOrder = async (userId: number, customerName: string, cartItems: CartItem[]): Promise<void> => {
+  const db = await getDb();
+  const orderDate = new Date().toISOString().split('T')[0];
+  
+  for (const item of cartItems) {
+    await db.executeSql(
+      'INSERT INTO orders (userId, productId, quantity, totalPrice, status, orderDate, customerName) VALUES (?, ?, ?, ?, ?, ?, ?)',
+      [userId, item.productId, item.quantity, item.productPrice * item.quantity, 'pending', orderDate, customerName]
+    );
+  }
+  
+  await clearCart(userId);
+};
+
+export const fetchUserOrders = async (userId: number): Promise<Order[]> => {
+  const db = await getDb();
+  const [result] = await db.executeSql(`
+    SELECT o.id, o.userId, o.productId, o.quantity, o.totalPrice, o.status, o.orderDate, o.customerName, p.name as productName
+    FROM orders o
+    LEFT JOIN products p ON o.productId = p.id
+    WHERE o.userId = ?
+    ORDER BY o.orderDate DESC
+  `, [userId]);
+  
+  const orders: Order[] = [];
+  for (let i = 0; i < result.rows.length; i++) {
+    orders.push(result.rows.item(i));
+  }
+  return orders;
+};
+
+export const updateUserProfile = async (userId: number, username: string, password: string): Promise<void> => {
+  const db = await getDb();
+  await db.executeSql('UPDATE users SET username=?, password=? WHERE id=?', [username, password, userId]);
 };

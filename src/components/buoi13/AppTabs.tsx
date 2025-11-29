@@ -5,11 +5,13 @@ import HomeStackScreen from './HomeStackScreen';
 import SignupScreen from './SignupScreen';
 import LoginScreen from './LoginScreen';
 import AdminScreen from './AdminScreen';
+import ProfileScreen from './ProfileScreen';
 import { HomeStackParamList } from './types';
 import { useAuth } from './AuthContext';
 
 export type BottomTabParamList = {
   HomeTab: { screen?: keyof HomeStackParamList } | undefined;
+  ProfileTab: undefined;
   SignupTab: undefined;
   LoginTab: undefined;
   AdminTab: undefined;
@@ -47,6 +49,42 @@ const AppTabs = () => {
           ),
         }}
       />
+      {user ? (
+        <Tab.Screen
+          name="ProfileTab"
+          component={ProfileScreen}
+          options={{
+            title: 'Profile',
+            tabBarIcon: ({ color, size }) => (
+              <Text style={{ fontSize: size, color }}>👤</Text>
+            ),
+          }}
+        />
+      ) : (
+        <>
+          <Tab.Screen
+            name="SignupTab"
+            component={SignupScreen}
+            options={{
+              title: 'Sign up',
+              tabBarIcon: ({ color, size }) => (
+                <Text style={{ fontSize: size, color }}>📝</Text>
+              ),
+            }}
+          />
+          <Tab.Screen
+            name="LoginTab"
+            component={LoginScreen}
+            options={{
+              title: 'Login',
+              tabBarIcon: ({ color, size }) => (
+                <Text style={{ fontSize: size, color }}>🚪</Text>
+              ),
+            }}
+          />
+        </>
+      )}
+      
       {user && user.role === 'admin' && (
         <Tab.Screen
           name="AdminTab"
@@ -59,27 +97,6 @@ const AppTabs = () => {
           }}
         />
       )}
-
-      <Tab.Screen
-        name="SignupTab"
-        component={SignupScreen}
-        options={{
-          title: 'Sign up',
-          tabBarIcon: ({ color, size }) => (
-            <Text style={{ fontSize: size, color }}>📝</Text>
-          ),
-        }}
-      />
-      <Tab.Screen
-        name="LoginTab"
-        component={LoginScreen}
-        options={{
-          title: 'Login',
-          tabBarIcon: ({ color, size }) => (
-            <Text style={{ fontSize: size, color }}>🚪</Text>
-          ),
-        }}
-      />
     </Tab.Navigator>
   );
 };

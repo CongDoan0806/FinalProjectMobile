@@ -6,17 +6,42 @@ import {
   Image,
   ScrollView,
   TouchableOpacity,
-  SafeAreaView
+  SafeAreaView,
+  Alert
 } from 'react-native';
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
 import { useNavigation } from '@react-navigation/native';
 import { HomeStackParamList } from './types';
+import { addToCart, fetchProductById } from '../../database';
+import { useAuth } from './AuthContext';
 
 type DetailsScreenProps = NativeStackScreenProps<HomeStackParamList, 'Details'>;
 
 const DetailsScreen = ({ route }: DetailsScreenProps) => {
   const { product } = route.params;
   const navigation = useNavigation();
+  const { user } = useAuth();
+
+  const handleAddToCart = async () => {
+    if (!user) {
+      Alert.alert('Thông báo', 'Vui lòng đăng nhập để thêm sản phẩm vào giỏ hàng');
+      return;
+    }
+
+    try {
+      // Tìm product trong database bằng ID
+      const dbProduct = await fetchProductById(parseInt(product.id));
+      if (dbProduct) {
+        await addToCart(user.id, dbProduct.id, 1);
+        Alert.alert('Thành công', 'Đã thêm sản phẩm vào giỏ hàng!');
+      } else {
+        Alert.alert('Lỗi', 'Không tìm thấy sản phẩm');
+      }
+    } catch (error) {
+      console.error('❌ Lỗi khi thêm vào giỏ hàng:', error);
+      Alert.alert('Lỗi', 'Có lỗi xảy ra khi thêm vào giỏ hàng');
+    }
+  };
 
   return (
     <SafeAreaView style={styles.safeArea}>
@@ -87,7 +112,7 @@ const DetailsScreen = ({ route }: DetailsScreenProps) => {
         <TouchableOpacity style={styles.buyButton}>
           <Text style={styles.buyButtonText}>Mua Ngay</Text>
         </TouchableOpacity>
-        <TouchableOpacity style={styles.cartButton}>
+        <TouchableOpacity style={styles.cartButton} onPress={handleAddToCart}>
           <Text style={styles.cartButtonText}>Thêm Vào Giỏ</Text>
         </TouchableOpacity>
       </View>
