@@ -13,6 +13,7 @@ import CategoryManagementScreen from './CategoryManagementScreen';
 import ProductManagementScreen from './ProductManagementScreen';
 import ChatScreen from './ChatScreen';
 import UserManagementScreen from './UserManagementScreen';
+import OrderManagementScreen from './OrderManagementScreen';
 
 // export type HomeStackParamList = {
 //   Home: undefined;
@@ -36,6 +37,7 @@ const HomeStackScreen = () => {
       <Stack.Screen name="ProductManagement" component={ProductManagementScreen} />
       <Stack.Screen name="UserManagement" component={UserManagementScreen} />
       <Stack.Screen name="CategoryManagement" component={CategoryManagementScreen} />
+      <Stack.Screen name="OrderManagement" component={OrderManagementScreen} />
     </Stack.Navigator>
   );
 };

@@ -7,8 +7,9 @@ import {
   TextInput,
   Modal,
   StyleSheet,
+  Alert,
 } from 'react-native';
-import { fetchUsers } from '../../database';
+import { addUser, fetchUsers, updateUser, deleteUser } from '../../database';
 type User = {
   id: number;
   username: string;
@@ -19,9 +20,9 @@ const UserManagementScreen = () => {
   const [modalVisible, setModalVisible] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
   const [users, setUsers] = useState<Array<User>>([]);
+  const [editingUser, setEditingUser] = useState<User | null>(null);
   const [formData, setFormData] = useState({
     username: '',
-    email: '',
     password: '',
     role: 'user',
   });
@@ -37,8 +38,52 @@ const UserManagementScreen = () => {
     };
     loadUsers();
   }, []);
+  const handleSaveUser = async () => {
+    if (editingUser) {
+      await updateUser(editingUser.id, formData.username, formData.password, formData.role);
+    } else {
+      await addUser(formData.username, formData.password, formData.role);
+    }
+    const data = await fetchUsers();
+    setUsers(data);
+    resetForm();
+  }
+
+  const handleEditUser = (user: User) => {
+    setEditingUser(user);
+    setFormData({
+      username: user.username,
+      password: user.password,
+      role: user.role,
+    });
+    setModalVisible(true);
+  }
+
+
+  const handleDeleteUser = (id: number) => {
+      Alert.alert(
+        'Xác nhận',
+        'Bạn có chắc chắn muốn xóa user này?',
+        [
+          { text: 'Hủy', style: 'cancel' },
+          { text: 'Xóa', style: 'destructive', onPress: async () => {
+              try {
+                await deleteUser(id);;
+                const data = await fetchUsers();
+                setUsers(data);
+                Alert.alert('Xóa user thành công!');
+              } catch (error) {
+                console.error('❌ Lỗi khi xóa user:', error);
+                Alert.alert('Có lỗi xảy ra khi xóa user');
+              } 
+            } 
+          }
+        ]
+      );
+    }
   const resetForm = () => {
-    setFormData({ username: '', email: '', password: '', role: 'user' });
+    setFormData({ username: '', password: '', role: 'user' });
+    setEditingUser(null);
     setModalVisible(false);
   };  const renderUserItem = ({ item }: { item: any }) => (
     <View style={styles.userItem}>
@@ -48,10 +93,16 @@ const UserManagementScreen = () => {
         <Text style={styles.role}>Vai trò: {item.role}</Text>
       </View>
       <View style={styles.actions}>
-        <TouchableOpacity style={[styles.actionBtn, styles.editBtn]}>
+        <TouchableOpacity 
+          style={[styles.actionBtn, styles.editBtn]}
+          onPress={() => handleEditUser(item)}
+        >
           <Text style={styles.actionBtnText}>Sửa</Text>
         </TouchableOpacity>
-        <TouchableOpacity style={[styles.actionBtn, styles.deleteBtn]}>
+        <TouchableOpacity 
+          style={[styles.actionBtn, styles.deleteBtn]}
+          onPress={() => handleDeleteUser(item.id)}
+        >
           <Text style={styles.actionBtnText}>Xóa</Text>
         </TouchableOpacity>
       </View>
@@ -77,7 +128,9 @@ const UserManagementScreen = () => {
       </TouchableOpacity>
 
       <FlatList
-        data={}
+        data={users.filter(user =>
+          user.username.toLowerCase().includes(searchQuery.toLowerCase())
+        )}
         keyExtractor={item => item.id.toString()}
         renderItem={renderUserItem}
         showsVerticalScrollIndicator={false}
@@ -86,21 +139,15 @@ const UserManagementScreen = () => {
       <Modal visible={modalVisible} animationType="slide" transparent>
         <View style={styles.modalOverlay}>
           <View style={styles.modalContent}>
-            <Text style={styles.modalTitle}>Thêm người dùng</Text>
+            <Text style={styles.modalTitle}>
+              {editingUser ? 'Sửa người dùng' : 'Thêm người dùng'}
+            </Text>
 
             <TextInput
               style={styles.input}
               placeholder="Tên đăng nhập"
               value={formData.username}
               onChangeText={text => setFormData({ ...formData, username: text })}
-            />
-
-            <TextInput
-              style={styles.input}
-              placeholder="Email"
-              value={formData.email}
-              onChangeText={text => setFormData({ ...formData, email: text })}
-              keyboardType="email-address"
             />
 
             <TextInput
@@ -139,7 +186,7 @@ const UserManagementScreen = () => {
               <TouchableOpacity style={styles.cancelBtn} onPress={resetForm}>
                 <Text style={styles.cancelBtnText}>Hủy</Text>
               </TouchableOpacity>
-              <TouchableOpacity style={styles.saveBtn}>
+              <TouchableOpacity style={styles.saveBtn} onPress={handleSaveUser}>
                 <Text style={styles.saveBtnText}>Lưu</Text>
               </TouchableOpacity>
             </View>

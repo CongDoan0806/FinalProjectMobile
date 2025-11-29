@@ -16,6 +16,17 @@ const getDb = async (): Promise<SQLiteDatabase> => {
 export type Category = { id: number; name: string; };
 export type Product = { id: number; name: string; price: number; img: string; categoryId: number; };
 export type User = { id: number; username: string; password: string; role: string; };
+export type Order = {
+  id: number;
+  userId: number;
+  productId: number;
+  quantity: number;
+  totalPrice: number;
+  status: string;
+  orderDate: string;
+  customerName: string;
+  productName?: string;
+};
 
 // Dữ liệu mẫu
 const initialCategories: Category[] = [
@@ -74,6 +85,36 @@ export const initDatabase = async (onSuccess?: () => void): Promise<void> => {
         SELECT 'admin', '123456', 'admin'
         WHERE NOT EXISTS (SELECT 1 FROM users WHERE username = 'admin')
       `);
+      
+      // 4️⃣ Tạo bảng orders
+      tx.executeSql(`CREATE TABLE IF NOT EXISTS orders (
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        userId INTEGER,
+        productId INTEGER,
+        quantity INTEGER,
+        totalPrice REAL,
+        status TEXT DEFAULT 'pending',
+        orderDate TEXT,
+        customerName TEXT,
+        FOREIGN KEY (userId) REFERENCES users(id),
+        FOREIGN KEY (productId) REFERENCES products(id)
+      )`);
+      
+      // Thêm dữ liệu đơn hàng mẫu
+      const sampleOrders = [
+        [1, 1, 2, 500000, 'pending', '2024-01-15', 'Nguyễn Văn A'],
+        [1, 2, 1, 1100000, 'processing', '2024-01-16', 'Trần Thị B'],
+        [1, 3, 1, 490000, 'completed', '2024-01-17', 'Lê Văn C'],
+        [1, 4, 3, 360000, 'pending', '2024-01-18', 'Phạm Thị D'],
+        [1, 5, 1, 980000, 'processing', '2024-01-19', 'Hoàng Văn E']
+      ];
+      
+      sampleOrders.forEach(order => {
+        tx.executeSql(
+          'INSERT OR IGNORE INTO orders (userId, productId, quantity, totalPrice, status, orderDate, customerName) VALUES (?, ?, ?, ?, ?, ?, ?)',
+          order
+        );
+      });
     },
       (error) => console.error('❌ Transaction error:', error),
       () => {
@@ -287,3 +328,93 @@ export const deleteUser = async (id: number): Promise<void> => {
   const db = await getDb();
   await db.executeSql('DELETE FROM users WHERE id=?', [id]);
 }
+
+export const updateUser = async (id: number, username: string, password: string, role: string): Promise<void> => {
+  const db = await getDb();
+  await db.executeSql('UPDATE users SET username=?, password=?, role=? WHERE id=?', [username, password, role, id]);
+}
+
+export const fetchUserById = async (id: number): Promise<User | null> => {
+  const db = await getDb();
+  const [res] = await db.executeSql('SELECT * FROM users WHERE id=?', [id]);
+  const rows = res.rows;
+  if (rows.length > 0) {
+    return rows.item(0) as User;
+  }
+  return null;
+}
+
+// ====================== ORDER FUNCTIONS ======================
+// export type Order = {
+//   id: number;
+//   userId: number;
+//   productId: number;
+//   quantity: number;
+//   totalPrice: number;
+//   status: string;
+//   orderDate: string;
+//   customerName: string;
+//   productName: string;
+// };
+
+export const initOrdersTable = async (): Promise<void> => {
+  try {
+    const db = await getDb();
+    await db.executeSql(`
+      CREATE TABLE IF NOT EXISTS orders (
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        userId INTEGER,
+        productId INTEGER,
+        quantity INTEGER,
+        totalPrice REAL,
+        status TEXT DEFAULT 'pending',
+        orderDate TEXT,
+        customerName TEXT,
+        FOREIGN KEY (userId) REFERENCES users(id),
+        FOREIGN KEY (productId) REFERENCES products(id)
+      )
+    `);
+    
+    // Thêm dữ liệu mẫu
+    const sampleOrders = [
+      { userId: 1, productId: 1, quantity: 2, totalPrice: 500000, status: 'pending', orderDate: '2024-01-15', customerName: 'Nguyễn Văn A' },
+      { userId: 1, productId: 2, quantity: 1, totalPrice: 1100000, status: 'processing', orderDate: '2024-01-16', customerName: 'Trần Thị B' },
+      { userId: 1, productId: 3, quantity: 1, totalPrice: 490000, status: 'completed', orderDate: '2024-01-17', customerName: 'Lê Văn C' },
+    ];
+    
+    for (const order of sampleOrders) {
+      await db.executeSql(
+        'INSERT OR IGNORE INTO orders (userId, productId, quantity, totalPrice, status, orderDate, customerName) VALUES (?, ?, ?, ?, ?, ?, ?)',
+        [order.userId, order.productId, order.quantity, order.totalPrice, order.status, order.orderDate, order.customerName]
+      );
+    }
+  } catch (error) {
+    console.error('❌ Error initializing orders table:', error);
+  }
+};
+
+export const fetchOrders = async (): Promise<Order[]> => {
+  try {
+    const db = await getDb();
+    const results = await db.executeSql(`
+      SELECT 
+        o.id, o.userId, o.productId, o.quantity, o.totalPrice, o.status, o.orderDate, o.customerName,
+        p.name as productName
+      FROM orders o
+      LEFT JOIN products p ON o.productId = p.id
+      ORDER BY o.orderDate DESC
+    `);
+    const rows = results[0].rows;
+    const list: Order[] = [];
+    for (let i = 0; i < rows.length; i++) list.push(rows.item(i));
+    return list;
+  } catch (error) {
+    console.error('❌ Error fetching orders:', error);
+    return [];
+  }
+};
+
+export const updateOrderStatus = async (id: number, status: string): Promise<void> => {
+  const db = await getDb();
+  await db.executeSql('UPDATE orders SET status=? WHERE id=?', [status, id]);
+};

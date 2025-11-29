@@ -66,6 +66,18 @@ const AdminScreen = () => {
     },
     {
       id: 4,
+      title: 'Quản trị đơn hàng',
+      subtitle: 'Xem và cập nhật trạng thái đơn hàng',
+      icon: '📦',
+      onPress: () => {
+        navigation.navigate('HomeTab', { 
+          screen: 'OrderManagement' 
+        });
+      },
+      color: '#E91E63'
+    },
+    {
+      id: 5,
       title: 'Thống kê',
       subtitle: 'Xem báo cáo và thống kê',
       icon: '📈',

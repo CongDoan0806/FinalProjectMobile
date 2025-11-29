@@ -31,6 +31,7 @@ export type HomeStackParamList = {
   AdminDashboard: undefined;
   CategoryManagement: undefined;
   UserManagement: undefined;
+  OrderManagement: undefined;
   AddUser: undefined;
   EditUser: { userId: number };
   ProductManagement: { categoryId: number };
