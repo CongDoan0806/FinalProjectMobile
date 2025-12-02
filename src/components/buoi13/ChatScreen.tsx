@@ -29,7 +29,7 @@ const ChatScreen = ({ navigation }: ChatScreenProps) => {
   const [messages, setMessages] = useState<Message[]>([
     {
       id: '1',
-      text: 'Xin chào! Tôi là trợ lý AI của Cửa Hàng Thời Trang Công Đoàn. Tôi có thể giúp bạn tìm hiểu về sản phẩm, giá cả và các thông tin khác. Bạn cần hỗ trợ gì?',
+      text: '👋 **CHÀO MỪNG ĐẾN VỚI CỬA HÀNG!**\n\n🤖 Tôi là trợ lý AI của **Cửa Hàng Thời Trang Công Đoàn**\n\n🎯 **TÔI CÓ THỂ GIÚP BẠN:**\n\n🛍️ Tìm hiểu sản phẩm\n💰 Kiểm tra giá cả\n🏷️ Xem danh mục\n📞 Tư vấn mua hàng\n\n❓ Bạn cần hỗ trợ gì?',
       isUser: false,
       timestamp: new Date()
     }
@@ -71,7 +71,7 @@ const ChatScreen = ({ navigation }: ChatScreenProps) => {
 
 Hãy trả lời câu hỏi sau về cửa hàng: ${userMessage.text}`;
         
-        const response = await fetch('http://10.0.2.2:8080/chat', {
+        const response = await fetch('http://10.0.140.38:8080/chat', {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
@@ -81,8 +81,7 @@ Hãy trả lời câu hỏi sau về cửa hàng: ${userMessage.text}`;
           }),
         });
 
-        console.log('Response status:', response.status);
-        console.log('Response ok:', response.ok);
+
 
         if (!response.ok) {
           throw new Error(`HTTP ${response.status}: ${response.statusText}`);
@@ -90,7 +89,6 @@ Hãy trả lời câu hỏi sau về cửa hàng: ${userMessage.text}`;
 
         const responseText = await response.text();
         console.log('Raw response:', responseText);
-        Alert.alert('AI Response', responseText);
         
         // Try to parse as JSON first, if fails use as text
         try {
@@ -101,23 +99,19 @@ Hãy trả lời câu hỏi sau về cửa hàng: ${userMessage.text}`;
         }
       } catch (apiError) {
         console.log('API Error:', apiError);
-        console.log('Error details:', {
-          name: (apiError as Error).name,
-          message: (apiError as Error).message
-        });
         // Fallback responses based on keywords
         const question = userMessage.text.toLowerCase();
         
         if (question.includes('sản phẩm') || question.includes('hàng')) {
-          aiResponseText = `Cửa hàng chúng tôi có ${products.length} sản phẩm thuộc các danh mục: ${categories.map(c => c.name).join(', ')}. Một số sản phẩm nổi bật:\n\n${products.slice(0, 3).map(p => `• ${p.name}: ${p.price.toLocaleString('vi-VN')}đ`).join('\n')}`;
+          aiResponseText = `🛍️ **SẢN PHẨM CỬA HÀNG**\n\n📊 Tổng cộng: ${products.length} sản phẩm\n🏷️ Danh mục: ${categories.map(c => c.name).join(', ')}\n\n⭐ **SẢN PHẨM NỔI BẬT:**\n${products.slice(0, 3).map(p => `\n🔸 ${p.name}\n   💰 ${p.price.toLocaleString('vi-VN')}đ`).join('')}\n\n✨ Tất cả sản phẩm đều đảm bảo chất lượng cao!`;
         } else if (question.includes('giá') || question.includes('tiền')) {
-          aiResponseText = `Giá sản phẩm tại cửa hàng dao động từ ${Math.min(...products.map(p => p.price)).toLocaleString('vi-VN')}đ đến ${Math.max(...products.map(p => p.price)).toLocaleString('vi-VN')}đ. Chúng tôi cam kết giá cả hợp lý và chất lượng tốt nhất.`;
+          aiResponseText = `💰 **THÔNG TIN GIÁ CẢ**\n\n📈 Khoảng giá: ${Math.min(...products.map(p => p.price)).toLocaleString('vi-VN')}đ - ${Math.max(...products.map(p => p.price)).toLocaleString('vi-VN')}đ\n\n🎯 **CAM KẾT:**\n✅ Giá cả hợp lý\n✅ Chất lượng tốt nhất\n✅ Uy tín - Tin cậy\n\n🔥 Nhiều ưu đãi hấp dẫn đang chờ bạn!`;
         } else if (question.includes('danh mục') || question.includes('loại')) {
-          aiResponseText = `Cửa hàng có ${categories.length} danh mục chính: ${categories.map(c => c.name).join(', ')}. Mỗi danh mục đều có nhiều sản phẩm chất lượng cao.`;
+          aiResponseText = `🏷️ **DANH MỤC SẢN PHẨM**\n\n📋 Tổng cộng: ${categories.length} danh mục chính\n\n${categories.map((c, index) => `${index + 1}️⃣ ${c.name}`).join('\n')}\n\n✨ Mỗi danh mục đều có nhiều sản phẩm chất lượng cao, đa dạng mẫu mã!`;
         } else if (question.includes('chào') || question.includes('xin chào') || question.includes('hello')) {
-          aiResponseText = '😊 Xin chào! Tôi là trợ lý AI của Cửa Hàng Thời Trang Công Đoàn. Tôi có thể giúp bạn:\n\n• Tìm hiểu sản phẩm\n• Kiểm tra giá cả\n• Xem danh mục sản phẩm\n\nBạn muốn biết thông tin gì?';
+          aiResponseText = '👋 **XIN CHÀO!**\n\n🤖 Tôi là trợ lý AI của **Cửa Hàng Thời Trang Công Đoàn**\n\n🎯 **TÔI CÓ THỂ GIÚP BẠN:**\n\n🛍️ Tìm hiểu sản phẩm\n💰 Kiểm tra giá cả\n🏷️ Xem danh mục sản phẩm\n📞 Tư vấn mua hàng\n\n❓ Bạn muốn biết thông tin gì?';
         } else {
-          aiResponseText = '🤖 Hiện tại tôi không thể kết nối với AI server. Tuy nhiên tôi vẫn có thể giúp bạn:\n\n• Hỏi về "sản phẩm"\n• Hỏi về "giá cả"\n• Hỏi về "danh mục"\n\nVui lòng thử lại!';
+          aiResponseText = '🤖 **THÔNG BÁO**\n\n⚠️ Hiện tại tôi không thể kết nối với AI server\n\n💡 **NHƯNG TÔI VẪN CÓ THỂ GIÚP BẠN:**\n\n🛍️ Hỏi về "sản phẩm"\n💰 Hỏi về "giá cả"\n🏷️ Hỏi về "danh mục"\n\n🔄 Vui lòng thử lại!';
         }
       }
       
@@ -133,7 +127,7 @@ Hãy trả lời câu hỏi sau về cửa hàng: ${userMessage.text}`;
       console.error('Error:', error);
       const errorMessage: Message = {
         id: (Date.now() + 1).toString(),
-        text: 'Xin lỗi, đã có lỗi xảy ra. Vui lòng thử lại sau.',
+        text: '❌ **LỖI HỆ THỐNG**\n\n😔 Xin lỗi, đã có lỗi xảy ra\n\n🔄 Vui lòng thử lại sau\n\n📞 Hoặc liên hệ hỗ trợ nếu vấn đề tiếp tục',
         isUser: false,
         timestamp: new Date()
       };

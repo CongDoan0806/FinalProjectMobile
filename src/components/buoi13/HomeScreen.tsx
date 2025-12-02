@@ -9,7 +9,8 @@ import {
   ImageSourcePropType,
   ActivityIndicator,
   TextInput,
-  Alert
+  Alert,
+  ScrollView
 } from 'react-native';
 
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
@@ -180,37 +181,43 @@ const HomeScreen = ({ navigation }: HomeScreenProps) => {
 
       {/* Menu điều hướng */}
       <View style={styles.menuContainer}>
-        <TouchableOpacity
-          style={styles.menuItem}
-          onPress={() => navigation.navigate('Home')}
+        <ScrollView 
+          horizontal 
+          showsHorizontalScrollIndicator={false}
+          contentContainerStyle={styles.menuContent}
         >
-          <Text style={styles.menuIcon}>🏪</Text>
-          <Text style={styles.menuText}>Trang chủ</Text>
-        </TouchableOpacity>
+          <TouchableOpacity
+            style={styles.menuItem}
+            onPress={() => navigation.navigate('Home')}
+          >
+            <Text style={styles.menuIcon}>🏪</Text>
+            <Text style={styles.menuText}>Trang chủ</Text>
+          </TouchableOpacity>
 
-        <TouchableOpacity
-          style={styles.menuItem}
-          onPress={() => navigation.navigate('Categories')}
-        >
-          <Text style={styles.menuIcon}>🛍️</Text>
-          <Text style={styles.menuText}>Danh mục sản phẩm</Text>
-        </TouchableOpacity>
+          <TouchableOpacity
+            style={styles.menuItem}
+            onPress={() => navigation.navigate('Categories')}
+          >
+            <Text style={styles.menuIcon}>🛍️</Text>
+            <Text style={styles.menuText}>Danh mục</Text>
+          </TouchableOpacity>
 
-        <TouchableOpacity
-          style={styles.menuItem}
-          onPress={() => navigation.navigate('OrderHistory')}
-        >
-          <Text style={styles.menuIcon}>📋</Text>
-          <Text style={styles.menuText}>Lịch sử</Text>
-        </TouchableOpacity>
+          <TouchableOpacity
+            style={styles.menuItem}
+            onPress={() => navigation.navigate('OrderHistory')}
+          >
+            <Text style={styles.menuIcon}>📋</Text>
+            <Text style={styles.menuText}>Lịch sử</Text>
+          </TouchableOpacity>
 
-        <TouchableOpacity
-          style={styles.menuItem}
-          onPress={() => navigation.navigate('Chat')}
-        >
-          <Text style={styles.menuIcon}>🤖</Text>
-          <Text style={styles.menuText}>Trợ lý AI</Text>
-        </TouchableOpacity>
+          <TouchableOpacity
+            style={styles.menuItem}
+            onPress={() => navigation.navigate('Chat')}
+          >
+            <Text style={styles.menuIcon}>🤖</Text>
+            <Text style={styles.menuText}>Trợ lý AI</Text>
+          </TouchableOpacity>
+        </ScrollView>
       </View>
 
       {/* Search Bar */}
@@ -402,10 +409,6 @@ const styles = StyleSheet.create({
   },
 
   menuContainer: {
-    flexDirection: 'row',
-    justifyContent: 'space-around',
-    paddingVertical: 15,
-    paddingHorizontal: 10,
     backgroundColor: '#fff',
     borderBottomWidth: 1,
     borderBottomColor: '#e0e0e0',
@@ -415,13 +418,19 @@ const styles = StyleSheet.create({
     shadowOpacity: 0.1,
     shadowRadius: 2
   },
+  menuContent: {
+    paddingVertical: 15,
+    paddingHorizontal: 10,
+  },
   menuItem: {
     flexDirection: 'row',
     alignItems: 'center',
     paddingHorizontal: 15,
-    paddingVertical: 8,
+    paddingVertical: 10,
     borderRadius: 20,
-    backgroundColor: '#f5f5f5'
+    backgroundColor: '#f5f5f5',
+    marginRight: 10,
+    minWidth: 120,
   },
   menuIcon: {
     fontSize: 20,
